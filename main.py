@@ -3,19 +3,13 @@ import tkinter as tk
 from tkinter import ttk
 import datetime
 from tkinter.simpledialog import askstring
+from tkinter import messagebox
 from PIL import Image,ImageTk
 
 
 class Window(tk.Tk):
     def __init__(self):
         super().__init__()
-        #===========================SearchMenu========================================
-        self.menubar = tk.Menu(self)
-        self.config(menu=self.menubar)
-        self.command_menu = tk.Menu(self.menubar)
-        self.command_menu.add_command(label="搜尋", command=self.Menu_Search)
-        self.menubar.add_cascade(label="地名關鍵字搜尋", menu=self.command_menu)
-        #===========================SearchMenu========================================
         #===========================MainFrame========================================
         MainFrame = ttk.Frame(self)
         MainFrame.pack(padx=50,pady=50)
@@ -43,6 +37,24 @@ class Window(tk.Tk):
         #===========================CenterFrame========================================
         CenterFrame = ttk.LabelFrame(MainFrame,text='查詢結果欄位')
         CenterFrame.pack()
+        # ===========================searchFrame=====================================
+        searchFrame = ttk.Frame(CenterFrame)
+        searchFrame.pack(side=tk.TOP, pady=5)
+        searchLabel = ttk.Label(searchFrame, text="請輸入地名：")
+        searchLabel.pack(side=tk.LEFT)
+        self.searchVar = tk.StringVar()
+        self.searchEntry = ttk.Entry(searchFrame, textvariable=self.searchVar)
+        self.searchEntry.pack(side=tk.LEFT)
+        # ===========================searchButton=====================================
+        searchButton = ttk.Button(searchFrame, text="搜尋", command=self.searchButton)
+        searchButton.pack(side=tk.LEFT, padx=5)
+        # ===========================searchButton=====================================
+
+        # ===========================clearButton=====================================
+        clearButton = ttk.Button(searchFrame, text="清除", command=self.clearButton)
+        clearButton.pack(side=tk.LEFT, padx=5)
+        # ===========================clearButton=====================================
+        # ===========================searchFrame=====================================
         columns = ('#1', '#2', '#3', '#4','#5','#6','#7','#8','#9')
         self.treeC = ttk.Treeview(CenterFrame, columns=columns, show='headings')
         self.treeC.heading('#1', text='航廈')
@@ -107,15 +119,31 @@ class Window(tk.Tk):
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
         self.tree.config(yscrollcommand=scrollbar.set)
     #===========================BottomFrame=====================================
-    #===========================Menu_Search=====================================
-    def Menu_Search(self):
-        enter = askstring("搜尋目的地","請輸入地名關鍵字")
+    # ===========================searchButton=====================================
+    def searchButton(self):
+        # 先檢查是否有輸入查詢關鍵字
+        keyword = self.searchEntry.get().strip()
+        if not keyword:
+            messagebox.showinfo("錯誤", "請輸入查詢關鍵字")
+            return
+        # 在這裡寫搜尋地名的程式碼   
+        found = False 
         for child in self.treeC.get_children():
             self.treeC.delete(child)
         for item in datasource.data_list:
-            if enter in item['往來地點中文']:
-                self.treeC.insert('',tk.END,values=[item['航廈'],item['航空公司代碼'],item['航空公司中文'],item['班次'],item['登機門/機坪'],item['預計日期'],item['預計時間'],item['往來地點中文'],item['航班狀態']])
-    #===========================Menu_Search=====================================
+            if keyword in item['往來地點中文']:
+                self.treeC.insert('', tk.END, values=[item['航廈'], item['航空公司代碼'], item['航空公司中文'],item['班次'], item['登機門/機坪'], item['預計日期'], item['預計時間'], item['往來地點中文'], item['航班狀態']])
+                found = True
+        # 若無查詢結果，顯示訊息框
+        if not found:
+            messagebox.showinfo("提示", "查無此地點，請再輸入一次")
+    # ===========================searchButton=====================================
+    # ===========================clearButton=====================================
+    def clearButton(self):
+        self.searchEntry.delete(0, tk.END)
+        for child in self.treeC.get_children():
+            self.treeC.delete(child)
+    # ===========================clearButton=====================================
     #===========================Radio_Event=====================================
     def Radio_Event(self):
         now = datetime.datetime.now()
