@@ -5,3 +5,5 @@
 點選特定航空公司後，會在下方的treeview中，列出航廈、班次、登機門/機坪、表訂日期、表訂時間、預計日期、預計時間、往來地點、航班狀態等資訊，
 另外再main程式，製作Menu_Search功能，可輸入出發地的關鍵字，會在中間的treeview中，列出航廈、班次、登機門/機坪、表訂日期、表訂時間、預計日期、預計時間、往來地點、航班狀態
 等資訊。
+
+![airport](https://github.com/JHAIPINHAO/__ProjectAirport__/assets/128681146/ea7b6cea-f4e3-43f4-b0ae-00ef81f338b1)
